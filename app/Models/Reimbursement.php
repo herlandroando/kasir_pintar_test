@@ -34,9 +34,9 @@ class Reimbursement extends Model
 
     protected static function booted(): void
     {
-        // static::creating(function (Reimbursement $reimbursement) {
-        //     $reimbursement->created_by  = request()->user()?->id ?? null;
-        //     $reimbursement->status      = ReimbursementStatusEnum::PENDING;
-        // });
+        static::creating(function (Reimbursement $reimbursement) {
+            $reimbursement->created_by  = request()->user()?->id ?? null;
+            $reimbursement->status      = ReimbursementStatusEnum::PENDING;
+        });
     }
 }
