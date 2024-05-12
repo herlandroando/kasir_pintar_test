@@ -7,6 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm as useFormInertia } from "@inertiajs/react";
 import ErrorMessage from "../../../Shared/Components/Typography/ErrorMessage";
 import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
 
 export default function CreateForm() {
     const {
@@ -15,22 +16,32 @@ export default function CreateForm() {
         formState: { errors },
     } = useForm({ resolver: yupResolver(createReimbursementSchema) });
 
+    const [isOnSubmit, setIsOnSubmit] = useState(false);
+
     const { data, setData, post, progress } = useFormInertia({
         name: null,
         description: null,
         document: null,
     });
 
+    useEffect(() => {
+        if (isOnSubmit)
+            post("/reimbursement", {
+                onSuccess: () => {
+                    toast.success("Success create request reimbursement!");
+                },
+                onError: (err) => {
+                    toast.error("There something error on input.");
+                },
+                onFinish: () => {
+                    setIsOnSubmit(false);
+                },
+            });
+    }, [isOnSubmit]);
+
     function onSubmit(data) {
         setData({ ...data });
-        post("/reimbursement", {
-            onSuccess: () => {
-                toast.success("Success create request reimbursement!");
-            },
-            onError: (err) => {
-                toast.success("There something error on input.");
-            },
-        });
+        setIsOnSubmit(true);
     }
 
     return (

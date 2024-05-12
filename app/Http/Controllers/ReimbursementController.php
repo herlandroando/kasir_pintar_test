@@ -59,15 +59,18 @@ class ReimbursementController extends Controller
         return Storage::download($r_file->path);
     }
 
-    public function create()
+    public function create(Request $request)
     {
+        if ($request->user()->role !== RoleEnum::STAFF) {
+            return redirect('/');
+        }
         return Inertia::render("Reimbursement/Create");
     }
 
     public function store(Request $request)
     {
         if ($request->user()->role !== RoleEnum::STAFF) {
-            return redirect('/')->intended();
+            return redirect('/');
         }
         // dd($request->file('document'), $request->input());
         $input = $request->validate([
@@ -103,7 +106,7 @@ class ReimbursementController extends Controller
 
         DB::commit();
 
-        return redirect(route('reimbursement.show', ['id' => $reimbursement->id]))->intended();
+        return redirect(route('reimbursement.show', ['id' => $reimbursement->id]));
     }
 
     public function updateStatus(Request $request, $id, $status)

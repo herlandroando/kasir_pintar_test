@@ -1,4 +1,4 @@
-import { Head, router } from "@inertiajs/react";
+import { Head, router, usePage } from "@inertiajs/react";
 import Layout from "@/Layouts/DefaultLayout";
 import TitlePage from "@/Shared/Components/Layout/TitlePage";
 import {
@@ -15,6 +15,8 @@ import { optionTableReimbursement } from "./Components/OptionTable";
 import { useEffect, useState } from "react";
 
 function Index({ data, meta }) {
+    const { user } = usePage().props;
+
     const [filter, setFilter] = useState({
         type: meta?.type ?? "all",
     });
@@ -55,14 +57,18 @@ function Index({ data, meta }) {
                             See information about reimbursement staff.
                         </Typography>
                     </div>
-                    <div className="md:block hidden">
-                        <Button
-                            color="green"
-                            onClick={() => router.get("/reimbursement/create")}
-                        >
-                            Add Request
-                        </Button>
-                    </div>
+                    {user.role === "STAFF" && (
+                        <div className="md:block hidden">
+                            <Button
+                                color="green"
+                                onClick={() =>
+                                    router.get("/reimbursement/create")
+                                }
+                            >
+                                Add Request
+                            </Button>
+                        </div>
+                    )}
                 </div>
                 <div>
                     <Tabs value={filter.type}>
@@ -79,13 +85,15 @@ function Index({ data, meta }) {
                         </TabsHeader>
                     </Tabs>
                 </div>
-                <Button
-                    className="md:hidden block"
-                    color="green"
-                    onClick={() => router.get("/reimbursement/create")}
-                >
-                    Add Request
-                </Button>
+                {user.role === "STAFF" && (
+                    <Button
+                        className="md:hidden block"
+                        color="green"
+                        onClick={() => router.get("/reimbursement/create")}
+                    >
+                        Add Request
+                    </Button>
+                )}
 
                 <div>
                     <Table
